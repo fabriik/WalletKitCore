@@ -72,7 +72,6 @@ let package = Package(
                 .headerSearchPath("../include"),           // BRCrypto
                 .headerSearchPath("."),
                 .headerSearchPath("../vendor"),
-                .headerSearchPath("../vendor/secp256k1"),  // To compile vendor/secp256k1/secp256k1.c
                 .unsafeFlags([
                     // Enable warning flags
                     "-Wall",
