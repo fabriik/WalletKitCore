@@ -62,18 +62,6 @@ let package = Package(
                 .headerSearchPath("../include"),           // BRCrypto
                 .headerSearchPath("."),
                 .headerSearchPath("../vendor"),
-                .unsafeFlags([
-                    // Enable warning flags
-                    "-Wall",
-                    "-Wconversion",
-                    "-Wsign-conversion",
-                    "-Wparentheses",
-                    "-Wswitch",
-                    // Disable warning flags, if appropriate
-                    "-Wno-implicit-int-conversion",
-                    // "-Wno-sign-conversion",
-                    "-Wno-missing-braces"
-                ])
             ]
         ),
 
@@ -84,16 +72,7 @@ let package = Package(
             path: "vendor/sqlite3",
             sources: ["sqlite3.c"],
             publicHeadersPath: "include",
-            cSettings: [
-                .unsafeFlags([
-                    "-Xclang", "-analyzer-disable-all-checks",
-                    "-D_HAVE_SQLITE_CONFIG_H=1",
-                    "-Wno-ambiguous-macro",
-                    "-Wno-shorten-64-to-32",
-                    "-Wno-unreachable-code",
-                    "-Wno-#warnings"
-                ])
-            ]
+            cSettings: []
         ),
 
         // Custom compilation flags for ed15519 - to silence warnings
@@ -103,11 +82,7 @@ let package = Package(
             path: "vendor/ed25519",
             exclude: [],
             publicHeadersPath: nil,
-            cSettings: [
-                .unsafeFlags([
-                    "-Xclang", "-analyzer-disable-all-checks"
-                ])
-            ]
+            cSettings: []
         ),
 
         // Custom compilation flags for hedera/proto - to silence warnings
@@ -116,12 +91,7 @@ let package = Package(
             dependencies: [],
             path: "src/hedera/proto",
             publicHeadersPath: nil,
-            cSettings: [
-                .unsafeFlags([
-                    "-Xclang", "-analyzer-disable-all-checks",
-                    "-Wno-shorten-64-to-32",
-                ])
-            ]
+            cSettings: []
         ),
         
         // Custom compilation flags for blake2 - to silence warnings
@@ -131,11 +101,7 @@ let package = Package(
             path: "vendor/blake2",
             exclude: [],
             publicHeadersPath: nil,
-            cSettings: [
-                .unsafeFlags([
-                    "-Xclang", "-analyzer-disable-all-checks"
-                ])
-            ]
+            cSettings: []
         )
     ]
 )
