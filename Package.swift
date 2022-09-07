@@ -4,17 +4,22 @@ import PackageDescription
 
 let package = Package(
     name: "WalletKitCore",
-    platforms: [
-        .macOS(.v10_15),
-        .iOS(.v11)
-    ],
     products: [
         .library(
             name: "WalletKitCore",
             targets: ["WalletKitCore"]
-        )
+        ),
+        
+        .executable(
+            name: "WalletKitCoreExplore",
+            targets: ["WalletKitCoreExplore"]
+        ),
+
+        .executable(
+            name: "WalletKitCorePerf",
+            targets: ["WalletKitCorePerf"]
+        ),
     ],
-    
     dependencies: [],
     targets: [
         // MARK: - Core Targets
@@ -67,6 +72,19 @@ let package = Package(
                 .headerSearchPath("../include"),           // BRCrypto
                 .headerSearchPath("."),
                 .headerSearchPath("../vendor"),
+                .headerSearchPath("../vendor/secp256k1"),  // To compile vendor/secp256k1/secp256k1.c
+                .unsafeFlags([
+                    // Enable warning flags
+                    "-Wall",
+                    "-Wconversion",
+                    "-Wsign-conversion",
+                    "-Wparentheses",
+                    "-Wswitch",
+                    // Disable warning flags, if appropriate
+                    "-Wno-implicit-int-conversion",
+                    // "-Wno-sign-conversion",
+                    "-Wno-missing-braces"
+                ])
             ]
         ),
 
@@ -77,7 +95,16 @@ let package = Package(
             path: "vendor/sqlite3",
             sources: ["sqlite3.c"],
             publicHeadersPath: "include",
-            cSettings: []
+            cSettings: [
+                .unsafeFlags([
+                    "-Xclang", "-analyzer-disable-all-checks",
+                    "-D_HAVE_SQLITE_CONFIG_H=1",
+                    "-Wno-ambiguous-macro",
+                    "-Wno-shorten-64-to-32",
+                    "-Wno-unreachable-code",
+                    "-Wno-#warnings"
+                ])
+            ]
         ),
 
         // Custom compilation flags for ed15519 - to silence warnings
@@ -87,7 +114,11 @@ let package = Package(
             path: "vendor/ed25519",
             exclude: [],
             publicHeadersPath: nil,
-            cSettings: []
+            cSettings: [
+                .unsafeFlags([
+                    "-Xclang", "-analyzer-disable-all-checks"
+                ])
+            ]
         ),
 
         // Custom compilation flags for hedera/proto - to silence warnings
@@ -96,7 +127,12 @@ let package = Package(
             dependencies: [],
             path: "src/hedera/proto",
             publicHeadersPath: nil,
-            cSettings: []
+            cSettings: [
+                .unsafeFlags([
+                    "-Xclang", "-analyzer-disable-all-checks",
+                    "-Wno-shorten-64-to-32",
+                ])
+            ]
         ),
         
         // Custom compilation flags for blake2 - to silence warnings
@@ -106,7 +142,65 @@ let package = Package(
             path: "vendor/blake2",
             exclude: [],
             publicHeadersPath: nil,
-            cSettings: []
-        )
+            cSettings: [
+                .unsafeFlags([
+                    "-Xclang", "-analyzer-disable-all-checks"
+                ])
+            ]
+        ),
+
+        // MARK: - Core Misc Targets
+
+        .target (
+            name: "WalletKitCoreExplore",
+            dependencies: ["WalletKitCore"],
+            path: "WalletKitCoreExplore",
+            cSettings: [
+                .headerSearchPath("../include"),
+                .headerSearchPath("../src"),
+            ]
+        ),
+
+        .target (
+            name: "WalletKitCorePerf",
+            dependencies: ["WalletKitCore", "WalletKitCoreSupportTests"],
+            path: "WalletKitCorePerf",
+            cSettings: [
+                .headerSearchPath("../include"),
+                .headerSearchPath("../src"),
+            ]
+        ),
+
+        // MARK: - Core Test Targets
+
+        .target(
+            name: "WalletKitCoreSupportTests",
+            dependencies: ["WalletKitCore"],
+            path: "WalletKitCoreTests/test",
+            publicHeadersPath: "include",
+            cSettings: [
+                .define("BITCOIN_TEST_NO_MAIN"),
+                .headerSearchPath("../../include"),
+                .headerSearchPath("../../src"),
+            ]
+        ),
+
+        .testTarget(
+            name: "WalletKitCoreTests",
+            dependencies: [
+                "WalletKitCoreSupportTests"
+            ],
+            path: "WalletKitCoreTests",
+            exclude: [
+                "test"
+            ],
+            cSettings: [
+                .headerSearchPath("../src"),
+            ],
+            linkerSettings: [
+                .linkedLibrary("pthread"),
+                .linkedLibrary("bsd", .when(platforms: [.linux])),
+            ]
+        ),
     ]
 )
