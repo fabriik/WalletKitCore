@@ -4,12 +4,17 @@ import PackageDescription
 
 let package = Package(
     name: "WalletKitCore",
+    platforms: [
+        .macOS(.v10_15),
+        .iOS(.v11)
+    ],
     products: [
         .library(
             name: "WalletKitCore",
             targets: ["WalletKitCore"]
         )
     ],
+    
     dependencies: [],
     targets: [
         // MARK: - Core Targets
