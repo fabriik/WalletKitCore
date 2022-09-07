@@ -103,11 +103,7 @@ let package = Package(
             path: "vendor/ed25519",
             exclude: [],
             publicHeadersPath: nil,
-            cSettings: [
-                .unsafeFlags([
-                    "-Xclang", "-analyzer-disable-all-checks"
-                ])
-            ]
+            cSettings: []
         ),
 
         // Custom compilation flags for hedera/proto - to silence warnings
@@ -116,12 +112,7 @@ let package = Package(
             dependencies: [],
             path: "src/hedera/proto",
             publicHeadersPath: nil,
-            cSettings: [
-                .unsafeFlags([
-                    "-Xclang", "-analyzer-disable-all-checks",
-                    "-Wno-shorten-64-to-32",
-                ])
-            ]
+            cSettings: []
         ),
         
         // Custom compilation flags for blake2 - to silence warnings
@@ -131,11 +122,7 @@ let package = Package(
             path: "vendor/blake2",
             exclude: [],
             publicHeadersPath: nil,
-            cSettings: [
-                .unsafeFlags([
-                    "-Xclang", "-analyzer-disable-all-checks"
-                ])
-            ]
+            cSettings: []
         )
     ]
 )
