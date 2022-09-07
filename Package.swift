@@ -8,17 +8,7 @@ let package = Package(
         .library(
             name: "WalletKitCore",
             targets: ["WalletKitCore"]
-        ),
-        
-        .executable(
-            name: "WalletKitCoreExplore",
-            targets: ["WalletKitCoreExplore"]
-        ),
-
-        .executable(
-            name: "WalletKitCorePerf",
-            targets: ["WalletKitCorePerf"]
-        ),
+        )
     ],
     dependencies: [],
     targets: [
@@ -146,60 +136,6 @@ let package = Package(
                     "-Xclang", "-analyzer-disable-all-checks"
                 ])
             ]
-        ),
-
-        // MARK: - Core Misc Targets
-
-        .target (
-            name: "WalletKitCoreExplore",
-            dependencies: ["WalletKitCore"],
-            path: "WalletKitCoreExplore",
-            cSettings: [
-                .headerSearchPath("../include"),
-                .headerSearchPath("../src"),
-            ]
-        ),
-
-        .target (
-            name: "WalletKitCorePerf",
-            dependencies: ["WalletKitCore", "WalletKitCoreSupportTests"],
-            path: "WalletKitCorePerf",
-            cSettings: [
-                .headerSearchPath("../include"),
-                .headerSearchPath("../src"),
-            ]
-        ),
-
-        // MARK: - Core Test Targets
-
-        .target(
-            name: "WalletKitCoreSupportTests",
-            dependencies: ["WalletKitCore"],
-            path: "WalletKitCoreTests/test",
-            publicHeadersPath: "include",
-            cSettings: [
-                .define("BITCOIN_TEST_NO_MAIN"),
-                .headerSearchPath("../../include"),
-                .headerSearchPath("../../src"),
-            ]
-        ),
-
-        .testTarget(
-            name: "WalletKitCoreTests",
-            dependencies: [
-                "WalletKitCoreSupportTests"
-            ],
-            path: "WalletKitCoreTests",
-            exclude: [
-                "test"
-            ],
-            cSettings: [
-                .headerSearchPath("../src"),
-            ],
-            linkerSettings: [
-                .linkedLibrary("pthread"),
-                .linkedLibrary("bsd", .when(platforms: [.linux])),
-            ]
-        ),
+        )
     ]
 )
